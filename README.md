@@ -4,14 +4,14 @@ This GitHub repository contains the source code for the manuscript titled "Predi
 
 
 ## Workflow
-1. **Data Retrieval:** Raw RNAseq fasta files for the infections.
-2. **Data Preprocessing and Genome Alignment:** [Galaxy Web Platform](https://usegalaxy.org/)
-3. **Differential Gene Expression Analysis:** [DEG Analysis](https://github.com/ItunuIsewon/Drug-Target-Prediction-Using-RNA-Seq/blob/main/DESeq2%20RNA%20Seq%20analysis.Rmd)
-4. **Differentially Expressed Genes (DEGs) Visualization:** [Draw Venn Diagram online tool](http://bioinformatics.psb.ugent.be/webtools/Venn/)
-5. **Functional enrichment analysis:** [The Database for Annotation, Visualization and Integrated Discovery (DAVID) functional annotation tool ](https://david.ncifcrf.gov/tools.jsp)
+1. **Data Retrieval:** Raw RNAseq Fasta files for the infections.
+2. **Data Preprocessing and Genome Alignment:** Using [Galaxy Web Platform](https://usegalaxy.org/)
+3. **Differential Gene Expression Analysis:** Using [DEG Analysis code](https://github.com/ItunuIsewon/Drug-Target-Prediction-Using-RNA-Seq/blob/main/DESeq2%20RNA%20Seq%20analysis.Rmd)
+4. **Differentially Expressed Genes (DEGs) Visualization:** Using [Draw Venn Diagram online tool](http://bioinformatics.psb.ugent.be/webtools/Venn/)
+5. **Functional enrichment analysis:** Using [The Database for Annotation, Visualization and Integrated Discovery (DAVID) functional annotation tool ](https://david.ncifcrf.gov/tools.jsp)
 6. **Visualization:** GGplot2 3.3.6 package in R
 7. **Clustering analysis:** Principal component analysis in R
 8. **PPI Network Construction and Hub Genes Identification:** Using [STRING](https://www.string-db.org/)   and Cytoscape version 3.9.1
-9. **Hub Genes Candidate Drug Prediction:** [Drug Signatures Database (DSigDB)](https://dsigdb.tanlab.org/DSigDBv1.0/)
-10. **Enrichment Analysis to access DSigDB:** [Enrichr](https://maayanlab.cloud/Enrichr/)
+9. **Hub Genes Candidate Drug Prediction:** Using [Drug Signatures Database (DSigDB)](https://dsigdb.tanlab.org/DSigDBv1.0/)
+10. **Enrichment Analysis to access DSigDB:** Using [Enrichr](https://maayanlab.cloud/Enrichr/)
   
