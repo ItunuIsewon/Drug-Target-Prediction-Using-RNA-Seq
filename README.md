@@ -6,7 +6,7 @@ This GitHub repository contains the source code for the manuscript titled "Predi
 ## Workflow
 1. **Data Retrieval:** Raw RNAseq fasta files for the infections.
 2. **Data Preprocessing and Genome Alignment:** [Galaxy Web Platform](https://usegalaxy.org/)
-3. **Differential Gene Expression Analysis:**
+3. **Differential Gene Expression Analysis:** [DEG Analysis](https://github.com/ItunuIsewon/Drug-Target-Prediction-Using-RNA-Seq/blob/main/DESeq2%20RNA%20Seq%20analysis.Rmd)
 4. **Differentially Expressed Genes (DEGs) Visualization:** [Draw Venn Diagram online tool](http://bioinformatics.psb.ugent.be/webtools/Venn/)
 5. **Functional enrichment analysis:** [The Database for Annotation, Visualization and Integrated Discovery (DAVID) functional annotation tool ](https://david.ncifcrf.gov/tools.jsp)
 6. **Visualization:** GGplot2 3.3.6 package in R
