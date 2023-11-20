@@ -1,0 +1,149 @@
+---
+title: "DAVID Visualization"
+author: "Itunu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(ggplot2)
+library(RColorBrewer)
+library(tidyverse)
+```
+
+
+
+Cellular component data
+```{r}
+CC <- read.csv("CommonGenesCC.csv")
+```
+
+
+```{r results='hide'}
+# Rearrange dataframe in ascending order of pvalue
+CC %>% 
+  arrange(PValue)
+```
+
+
+```{r results='hide'}
+# Selecting top 10 based on pvalue
+top10_CC<- head(CC, 10)
+top10_CC
+
+```
+
+
+```{r}
+# Visualization using bubble plot
+CC_plot <-ggplot(top10_CC, aes(x = Fold.Enrichment, y = reorder(Term, Count), size = Count, color = as.factor(PValue)))+ geom_point(alpha = 1.0) + labs(y = "Cellular Component") + scale_color_brewer(palette="Spectral") 
+CC_plot
+ggsave("Cellular Component.pdf", CC_plot, height = 5, width = 7, dpi = 250)
+
+
+```
+
+Molecular function 
+```{r}
+MF <- read.csv("CommonGenesMF.csv")
+```
+
+
+```{r results='hide'}
+# Rearrange dataframe in ascending order of pvalue
+MF %>% 
+  arrange(PValue)
+```
+
+
+```{r results='hide'}
+# Selecting top 10 based on pvalue
+top10_MF<- head(MF, 10)
+top10_MF
+
+```
+
+
+```{r}
+# Visualization using bubble plot
+MF_plot <-ggplot(top10_MF, aes(x = Fold.Enrichment, y = reorder(Term, Count), size = Count, color = as.factor(PValue)))+ geom_point(alpha = 1.0) + labs(y = "Molecular Function") + scale_color_brewer(palette="Spectral") 
+MF_plot
+ggsave("Molecular Function.pdf", MF_plot, height = 5, width = 7, dpi = 250)
+
+
+```
+
+Biological Process
+```{r}
+BP <- read.csv("CommonGenesBP.csv")
+```
+
+
+```{r results='hide'}
+# Rearrange dataframe in ascending order of pvalue
+BP %>% 
+  arrange(PValue)
+```
+
+
+```{r results='hide'}
+# Selecting top 10 based on pvalue
+top10_BP<- head(BP, 10)
+top10_BP
+
+```
+
+
+```{r}
+# Visualization using bubble plot
+BP_plot <-ggplot(top10_BP, aes(x = Fold.Enrichment, y = reorder(Term, Count), size = Count, color = as.factor(PValue)))+ geom_point(alpha = 1.0) + labs(y = "Biological Process") + scale_color_brewer(palette="Spectral") 
+BP_plot
+ggsave("Biological Process.pdf", BP_plot, height = 5, width = 7, dpi = 250)
+
+
+```
+
+
+
+```{r}
+KEGG <- read.csv("CommonGenesKEGG.csv")
+```
+
+
+```{r results='hide'}
+# Rearrange dataframe in ascending order of pvalue
+KEGG %>% 
+  arrange(PValue)
+```
+
+
+
+```{r}
+# Visualization using bubble plot
+KEGG_plot <-ggplot(KEGG, aes(x = Fold.Enrichment, y = reorder(Term, Count), size = Count, color = as.factor(PValue)))+ geom_point(alpha = 1.0) + labs(y = "KEGG PATHWAY") + scale_color_brewer(palette="Spectral") 
+KEGG_plot
+ggsave("KEGG pathway.pdf", BP_plot, height = 5, width = 7, dpi = 250)
+
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
