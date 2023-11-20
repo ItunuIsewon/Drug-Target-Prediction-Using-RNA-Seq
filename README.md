@@ -1,4 +1,4 @@
-# Drug Target Prediction Using RNA-Seq
+# Drug Target Prediction Using RNA-Seq Data
 
 This GitHub repository contains the source code for the manuscript titled "Predicting Candidate Drug Targets for Malaria and COVID-19 Co-Infection From Host’s Transcriptional Profile in Mono-Infection".  It contains codes for differential gene analysis on transcriptomic data of patients with single infections and gene ontology enrichment analysis visualization.
 
