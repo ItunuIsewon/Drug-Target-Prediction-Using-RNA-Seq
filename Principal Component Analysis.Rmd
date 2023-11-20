@@ -1,0 +1,78 @@
+---
+title: "PCA"
+author: "Itunu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R 
+```{r}
+Data = read.csv('common count.csv', header = 1)
+head(Data)
+```
+
+
+```{r}
+rownames(Data) = Data$X
+Data = Data[, -1]
+```
+
+
+```{r}
+df= Data[1:147,]
+```
+
+
+```{r}
+pca= prcomp(df, scale. = TRUE)
+```
+
+```{r}
+summary(pca)
+```
+
+```{r}
+library("ggfortify")
+```
+
+```{r}
+autoplot(pca, label=FALSE)
+```
+
+
+```{r}
+autoplot(pca, label=TRUE)
+```
+
+
+```{r}
+autoplot(pca, x=2, y=3, label=FALSE)
+```
+
+```{r}
+autoplot(pca, x=2, y=3, label=TRUE)
+```
+
+```{r}
+autoplot(pca, x=3, y=4, label=FALSE)
+```
+
+```{r}
+autoplot(pca, x=3, y=4, label=TRUE)
+```
+```{r}
+autoplot(pca, x=4, y=5, label=FALSE)
+```
+
+```{r}
+autoplot(pca, x=4, y=5, label=TRUE)
+```
+
+```{r}
+autoplot(pca, x=3, y=4, label=TRUE)
+```
+```
