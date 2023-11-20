@@ -1,0 +1,276 @@
+---
+title: "MM-control"
+author: "Itunu"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+true= TRUE
+false= FALSE
+```
+
+# R Markdown
+## Install packages
+Install the following packages BiocManager, dplyr, gplots, ggplot2, ggrepel
+```{r}
+install.packages(c('BiocManager','dplyr','gplots','ggplot2','ggrepel'))
+
+```
+
+Install DESeq2
+```{r}
+BiocManager::install('DESeq2')
+```
+
+ 
+```{r message=FALSE}
+library(DESeq2)
+library(dplyr)
+```
+
+##Import your count data
+```{r }
+countData = read.csv('Control-SM.csv', header = 1)
+head(countData)
+```
+
+
+##change the rowname of countdata to geneid and remove the first column(serial number)
+```{r}
+rownames(countData) = countData$Geneid
+countData = countData[, -1]
+```
+
+### rename the columns according to groups and set it to countdata columns
+```{r}
+columns = c("Control_1", "Control_2",
+            "SM","SM","SM","SM","SM","SM","SM")
+colnames(countData) = columns
+```
+
+##visualize the sum of all columns using barplots
+```{r}
+par(mar=c(8,4,4,1)+0.1)
+barplot(colSums(countData)/1e6, las=3)
+```
+
+
+```{r}
+#experiment design
+condition = c("control","control","SM","SM","SM","SM","SM","SM","SM")
+
+```
+
+
+```{r metadata}
+#metadata for DESEq2 data analysis
+colData = as.data.frame(cbind(colnames(countData), condition))
+colData 
+```
+
+
+```{r message=FALSE}
+#create deseq2 dataset and convert to deseqobject
+dds= DESeqDataSetFromMatrix(countData = countData,
+                            colData = colData,
+                            design = ~condition)
+dds= DESeq(dds)
+```
+
+
+```{r}
+### filter out rows with low gene reads
+dds= dds[rowSums(counts(dds)) > 100,]
+nrow(dds)
+```
+
+
+```{r pca plot}
+library(ggplot2)
+### regularized log transformation(normalization) of dds
+rld = rlog(dds)
+plotPCA(rld, intgroup = c("condition"))
+```
+
+
+visualization with heatmap
+```{r}
+#librarys for heatmap
+detectGroups <- function (x){  # x are col names
+  tem <- gsub("[0-9]*$","",x) # Remove all numbers from end
+  #tem = gsub("_Rep|_rep|_REP","",tem)
+  tem <- gsub("_$","",tem); # remove "_" from end
+  tem <- gsub("_Rep$","",tem); # remove "_Rep" from end
+  tem <- gsub("_rep$","",tem); # remove "_rep" from end
+  tem <- gsub("_REP$","",tem)  # remove "_REP" from end
+  return( tem )
+}
+dist2 <- function(x, ...)   # distance function = 1-PCC (Pearson's correlation coefficient)
+  as.dist(1-cor(t(x), method="pearson"))
+```
+
+```{r, fig.height=8, fig.width=12} 
+#heatmap
+library(gplots)
+
+hclust2 <- function(x, method="average", ...)  # average linkage in hierarchical clustering
+  hclust(x, method=method, ...)
+
+n=50 # number of top genes by standard deviation
+
+x = assay(rld)
+if(n>dim(x)[1]) n = dim(x)[1] # max	as data
+
+x = x[order(apply(x,1,sd),decreasing=TRUE),]  # sort genes by standard deviation
+
+x = x[1:n,]   # only keep the n genes
+
+# this will cutoff very large values, which could skew the color 
+x=as.matrix(x[1:n,])-apply(x[1:n,],1,mean)
+cutoff = median(unlist(x)) + 4*sd (unlist(x)) 
+x[x>cutoff] <- cutoff
+cutoff = median(unlist(x)) - 4*sd (unlist(x)) 
+x[x< cutoff] <- cutoff
+	
+groups = detectGroups(colnames(x) )
+groups.colors = rainbow(length(unique(groups) ) )
+
+
+	lmat = rbind(c(5,4),c(0,1),c(3,2))
+	lwid = c(1.5,4)
+	lhei = c(1,.2,4)
+
+
+heatmap.2(x,Rowv=true, Colv= true,distfun = dist2,hclustfun=hclust2,dendrogram = c("both"),
+	 col=greenred(75), density.info="none", trace="none", scale="none", keysize=.5
+	,key=T, symkey=F
+	,ColSideColors=groups.colors[ as.factor(groups)]
+	,margins=c(8,12)
+	,cexRow=1
+	,srtCol=45
+	,cexCol=1.  # size of font for sample names
+	,lmat = lmat, lwid = lwid, lhei = lhei
+	)
+```
+
+```{r}
+#see the different constrast that we can make
+#resultsNames(dds)
+
+```
+
+
+```{r}
+#DESeq2 default logfold change is zero; change to
+Co_C =results(dds, lfcThreshold = 1, alpha = 0.05)
+summary(Co_C)
+dfCo_C= as.data.frame(Co_C)
+
+```
+
+
+
+
+
+```{r}
+write.csv(Co_C, file = "Co_C.csv")
+```
+
+
+```{r}
+BiocManager::install(c('AnnotationDbi','org.Hs.eg.db'))
+```
+
+```{r message=FALSE}
+#convert gene ids to gene names
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+```
+
+```{r results='hide'}
+#before conversion we have to remove the decimals after the gene ids
+#create a new column in the res table called Ensemble that will contain gene ids without decimal. 'gsub' removes any decimal points and substitute with nothing
+Co_C$Ensemble = gsub("\\..*","",row.names(Co_C))
+head(as.data.frame(Co_C))
+```
+
+```{r results='hide'}
+#now, map Ensemble id to gene symbols
+#to check the columns in org.Hs, type columns(org.Hs.eg.db)
+Co_C$SYMBOL = mapIds(org.Hs.eg.db,
+                    key=Co_C$Ensemble,
+                    column ="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+Co_C$ENTREZ = mapIds(org.Hs.eg.db,
+                    key=Co_C$Ensemble,
+                    column ="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+
+```
+
+```{r results='hide'}
+#label up and down regulated genes
+Co_C$diffexpress[Co_C$log2FoldChange>1 & Co_C$padj<0.05] = "Up"
+Co_C$diffexpress[Co_C$log2FoldChange<1 & Co_C$padj<0.05] = "Down"
+Co_C
+dfCoC= as.data.frame(Co_C)
+```
+
+```{r}
+dfCoC$delabel= NA
+```
+
+volcano plots showing the top genes
+
+```{r results='hide'}
+#arrange the differentially expressed genes according to pvalue (top genes have the smallest pvalue)
+arrange(dfCoC,pvalue)
+write.csv(arrange(dfCoC,pvalue), file = "orderedDEGscontrolVsSM.csv")
+```
+
+```{r results='hide'}
+#top 30
+head(arrange(dfCoC,pvalue),30)$pvalue
+
+```
+
+```{r results='hide'}
+#create a threshold(30 )for the top genes that will be labelled on the volcano plot
+thresh= head(arrange(dfCoC,pvalue),30)$pvalue[30]
+thresh
+
+```
+
+```{r results='hide'}
+#gene symbol for the first 20 genes
+head(arrange(dfCoC,pvalue),20)$SYMBOL
+```
+
+
+```{r results='hide'}
+head(arrange(dfCoC,pvalue),20)$Ensemble
+```
+
+
+```{r}
+dfCoC$delabel[dfCoC$pvalue<=thresh] = (dfCoC$SYMBOL[dfCoC$pvalue <=thresh])
+``` 
+
+```{r}
+#now, lets plot volcano plot with logfoldchange and padjvalue
+#library(ggplot2)
+#library(gplots)
+library(ggrepel)
+ggplot(dfCoC, aes(log2FoldChange, -log10(padj), col=diffexpress, label=delabel)) + geom_point() + theme_minimal()+ geom_text_repel()+ scale_color_manual (values=c("blue","red", "black"))
+ #significant genes will be red, non sig will be black
+```
+
+
+
